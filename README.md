@@ -1,75 +1,160 @@
-# React + TypeScript + Vite
+# ⚡ VibeOS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Your AI-powered creative command center
 
-Currently, two official plugins are available:
+An AI-native workspace designed for indie builders, content creators, and solo founders who are building online.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎯 What is VibeOS?
 
-## React Compiler
+VibeOS is NOT:
+- ❌ Another productivity app
+- ❌ Just an AI chatbot
+- ❌ A Notion clone
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+VibeOS IS:
+- ✅ Context-aware AI workspace
+- ✅ Lightweight & performance-first
+- ✅ Built for solo builders
 
-Note: This will impact Vite dev & build performances.
+## 🔥 Key Features
 
-## Expanding the ESLint configuration
+### 1. Context-Aware AI
+AI that understands your entire workspace - all your notes, ideas, and projects.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 2. Modular System
+Micro apps you can drag to your workspace. Minimalist by design.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 3. Performance-First
+Smooth like Linear. No lag. No bloat. < 1.5s load time.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠️ Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Frontend**: React 19 + TypeScript + Vite
+- **Styling**: CSS Variables (Light/Dark mode)
+- **Backend**: Puter.js (Zero backend!)
+  - Built-in authentication
+  - Cloud storage
+  - AI services
+  - No infrastructure to maintain
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Build for Production
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+## 📁 Project Structure
+
+```
+src/
+├── features/
+│   ├── auth/          # Authentication with Puter.js
+│   ├── app/           # Main app shell & sidebar
+│   ├── workspace/     # Workspace management
+│   ├── notes/         # Note editor & list
+│   └── ai/            # Context-aware AI chat
+├── .shared/           # Reusable components (future)
+└── styles/            # Global styles & design system
+```
+
+## 🎨 Design System
+
+### Colors
+```css
+/* Light Mode */
+--bg-primary: #ffffff
+--bg-secondary: #f8fafc
+--text-primary: #0f172a
+--accent: #6366f1
+
+/* Dark Mode */
+--bg-primary: #0f172a
+--bg-secondary: #1e293b
+--text-primary: #f8fafc
+--accent: #818cf8
+```
+
+## 📋 Month 1 MVP Features
+
+- [x] Authentication (Puter.js)
+- [x] Workspace system (create/switch/delete)
+- [x] Note module (editor with auto-save)
+- [x] Context-aware AI chat
+- [x] Light/Dark mode support
+
+## 🗺️ Roadmap
+
+### Month 2
+- Task board module
+- Idea board module
+- AI caption generator
+- Shareable public links
+
+### Month 3
+- Landing page
+- Waitlist system
+- Product Hunt launch
+
+## 💰 Monetization (Planned)
+
+### Free Tier
+- 2 workspaces
+- 100 AI actions/month
+- Basic features
+
+### Pro ($8/month)
+- Unlimited workspaces
+- Full context AI
+- Custom themes
+- Public share pages
+
+### Power ($15/month)
+- AI automation
+- Export options
+- API access
+
+## 🌍 Target Audience
+
+Built for:
+- Indie hackers
+- Content creators
+- Solo founders
+- Freelance designers/developers
+- TikTok / YouTube creators
+
+NOT for:
+- Large enterprises
+- Traditional office workers
+- Mass market students
+
+## 🤝 Contributing
+
+This is currently a solo project. Contributions welcome after initial launch.
+
+## 🔗 Links
+
+- [Puter.js Documentation](https://docs.puter.com)
+- [Product Spec](./docs/VIBEOS_SPEC.md)
+
+---
+
+**Built with ❤️ for indie builders**

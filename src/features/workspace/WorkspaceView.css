@@ -1,0 +1,49 @@
+.workspace-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.workspace-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.workspace-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.btn-ai {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-ai:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.workspace-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.notes-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100%;
+}
