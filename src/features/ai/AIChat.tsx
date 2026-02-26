@@ -195,7 +195,7 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction, onWorksp
     let cleaned = content
 
     // Replace CREATE action
-    cleaned = cleaned.replace(/\[ACTION:CREATE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+    cleaned = cleaned.replace(/\[ACTION:CREATE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
       const titleMatch = actionContent.match(/Title:\s*(.+)/i)
       if (titleMatch) {
         return `✅ Đã tạo note: "${titleMatch[1].trim()}"`
@@ -204,7 +204,7 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction, onWorksp
     })
 
     // Replace UPDATE action
-    cleaned = cleaned.replace(/\[ACTION:UPDATE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+    cleaned = cleaned.replace(/\[ACTION:UPDATE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
       const titleMatch = actionContent.match(/Title:\s*(.+)/i)
       if (titleMatch) {
         return `✅ Đã cập nhật note: "${titleMatch[1].trim()}"`
@@ -218,7 +218,7 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction, onWorksp
     })
 
     // Replace CREATE_WORKSPACE action
-    cleaned = cleaned.replace(/\[ACTION:CREATE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+    cleaned = cleaned.replace(/\[ACTION:CREATE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
       const nameMatch = actionContent.match(/Name:\s*(.+)/i)
       if (nameMatch) {
         return `✅ Đã tạo workspace: "${nameMatch[1].trim()}"`
@@ -227,7 +227,7 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction, onWorksp
     })
 
     // Replace RENAME_WORKSPACE action
-    cleaned = cleaned.replace(/\[ACTION:RENAME_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+    cleaned = cleaned.replace(/\[ACTION:RENAME_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
       const nameMatch = actionContent.match(/Name:\s*(.+)/i)
       if (nameMatch) {
         return `✅ Đã đổi tên workspace thành: "${nameMatch[1].trim()}"`
@@ -236,7 +236,7 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction, onWorksp
     })
 
     // Replace DELETE_WORKSPACE action
-    cleaned = cleaned.replace(/\[ACTION:DELETE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+    cleaned = cleaned.replace(/\[ACTION:DELETE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
       const nameMatch = actionContent.match(/Name:\s*(.+)/i)
       if (nameMatch) {
         return `✅ Đã xóa workspace: "${nameMatch[1].trim()}"`

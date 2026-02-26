@@ -1,4 +1,4 @@
-import { FileText, MessageSquare, Sparkles, ArrowRight } from 'lucide-react'
+import { FileText, MessageSquare, Sparkles } from 'lucide-react'
 import { useScrollAnimation } from '../../../hooks/useScrollAnimation'
 
 const steps = [

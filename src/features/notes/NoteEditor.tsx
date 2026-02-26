@@ -21,7 +21,6 @@ export const NoteEditor = ({ workspaceId, noteId, onNoteSaved, refreshTrigger }:
   const [note, setNote] = useState<Note | null>(null)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (noteId) {
@@ -56,7 +55,6 @@ export const NoteEditor = ({ workspaceId, noteId, onNoteSaved, refreshTrigger }:
   const saveNote = async () => {
     if (!note) return
 
-    setIsSaving(true)
     try {
       const key = `notes_${workspaceId}`
       const notes = await puter.kv.get<Note[]>(key) || []
@@ -73,8 +71,6 @@ export const NoteEditor = ({ workspaceId, noteId, onNoteSaved, refreshTrigger }:
       }
     } catch (error) {
       console.error('Failed to save note:', error)
-    } finally {
-      setIsSaving(false)
     }
   }
 
