@@ -1,0 +1,75 @@
+/* Custom AlertDialog styles for VibeOS */
+[data-slot="alert-dialog-overlay"] {
+  background: rgba(7, 10, 18, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  z-index: 9999 !important;
+}
+
+[data-slot="alert-dialog-content"] {
+  background: rgba(15, 20, 35, 0.98) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(46, 233, 255, 0.3) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(46, 233, 255, 0.1) !important;
+  padding: 32px !important;
+  max-width: 480px !important;
+  z-index: 10000 !important;
+}
+
+[data-slot="alert-dialog-title"] {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: #F2F7FF !important;
+  margin-bottom: 12px !important;
+}
+
+[data-slot="alert-dialog-description"] {
+  font-size: 16px !important;
+  color: rgba(242, 247, 255, 0.7) !important;
+  line-height: 1.6 !important;
+  margin-bottom: 0 !important;
+}
+
+[data-slot="alert-dialog-footer"] {
+  margin-top: 24px !important;
+  gap: 12px !important;
+}
+
+/* Cancel button */
+[data-slot="alert-dialog-footer"] button:first-child {
+  padding: 12px 24px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #F2F7FF !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+[data-slot="alert-dialog-footer"] button:first-child:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Delete/Action button */
+[data-slot="alert-dialog-footer"] button:last-child {
+  padding: 12px 24px !important;
+  background: linear-gradient(135deg, #FF4757 0%, #E03E4D 100%) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #FFFFFF !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+[data-slot="alert-dialog-footer"] button:last-child:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4) !important;
+}

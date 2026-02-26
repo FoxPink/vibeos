@@ -1,5 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import puter from '@heyputer/puter.js'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import '@/components/ui/alert-dialog-custom.css'
 import './AIChat.css'
 
 interface Message {
@@ -12,14 +23,26 @@ interface Message {
 interface AIChatProps {
   workspaceId: string
   hideHeader?: boolean
-  onNoteAction?: (action: 'create' | 'update', noteData: any) => void
+  onNoteAction?: (action: 'create' | 'update' | 'delete', noteData: any) => void
+  onWorkspaceAction?: (action: 'create' | 'rename' | 'delete', workspaceData: any) => void
 }
 
-export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChatProps) => {
+export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction, onWorkspaceAction }: AIChatProps) => {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showQuickPrompts, setShowQuickPrompts] = useState(false)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const quickPrompts = [
+    { key: '/create', label: 'Tạo note', prompt: 'Tạo note mới về: ' },
+    { key: '/list', label: 'Liệt kê', prompt: 'Liệt kê tất cả notes' },
+    { key: '/search', label: 'Tìm kiếm', prompt: 'Tìm note về: ' },
+    { key: '/summary', label: 'Tóm tắt', prompt: 'Tóm tắt workspace' },
+    { key: '/workspace', label: 'Workspace', prompt: 'Tạo workspace: ' },
+    { key: '/help', label: 'Trợ giúp', prompt: 'Hướng dẫn sử dụng' },
+  ]
 
   useEffect(() => {
     loadMessages()
@@ -66,9 +89,13 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChat
         
         // Save the cleaned data back
         await puter.kv.set(key, normalizedMessages)
+      } else {
+        // Clear messages if workspace has no chat history
+        setMessages([])
       }
     } catch (error) {
       console.error('Failed to load messages:', error)
+      setMessages([])
     }
   }
 
@@ -82,10 +109,10 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChat
   }
 
   const parseAndExecuteActions = async (content: string) => {
-    // Parse CREATE action
-    const createMatch = content.match(/\[ACTION:CREATE\]([\s\S]*?)\[\/ACTION\]/i)
-    if (createMatch) {
-      const actionContent = createMatch[1]
+    // Parse all CREATE actions
+    const createMatches = content.matchAll(/\[ACTION:CREATE\]([\s\S]*?)\[\/ACTION\]/gi)
+    for (const match of createMatches) {
+      const actionContent = match[1]
       const titleMatch = actionContent.match(/Title:\s*(.+)/i)
       const contentMatch = actionContent.match(/Content:\s*([\s\S]+)/i)
       
@@ -96,10 +123,10 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChat
       }
     }
 
-    // Parse UPDATE action
-    const updateMatch = content.match(/\[ACTION:UPDATE\]([\s\S]*?)\[\/ACTION\]/i)
-    if (updateMatch) {
-      const actionContent = updateMatch[1]
+    // Parse all UPDATE actions
+    const updateMatches = content.matchAll(/\[ACTION:UPDATE\]([\s\S]*?)\[\/ACTION\]/gi)
+    for (const match of updateMatches) {
+      const actionContent = match[1]
       const idMatch = actionContent.match(/NoteID:\s*(.+)/i)
       const titleMatch = actionContent.match(/Title:\s*(.+)/i)
       const contentMatch = actionContent.match(/Content:\s*([\s\S]+)/i)
@@ -112,15 +139,53 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChat
       }
     }
 
-    // Parse DELETE action
-    const deleteMatch = content.match(/\[ACTION:DELETE\]([\s\S]*?)\[\/ACTION\]/i)
-    if (deleteMatch) {
-      const actionContent = deleteMatch[1]
+    // Parse all DELETE actions
+    const deleteMatches = content.matchAll(/\[ACTION:DELETE\]([\s\S]*?)\[\/ACTION\]/gi)
+    for (const match of deleteMatches) {
+      const actionContent = match[1]
       const idMatch = actionContent.match(/NoteID:\s*(.+)/i)
       
       if (idMatch) {
         const noteId = idMatch[1].trim()
         await deleteNote(noteId)
+      }
+    }
+
+    // Parse all CREATE_WORKSPACE actions
+    const createWorkspaceMatches = content.matchAll(/\[ACTION:CREATE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi)
+    for (const match of createWorkspaceMatches) {
+      const actionContent = match[1]
+      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
+      
+      if (nameMatch) {
+        const name = nameMatch[1].trim()
+        await createWorkspace(name)
+      }
+    }
+
+    // Parse all RENAME_WORKSPACE actions
+    const renameWorkspaceMatches = content.matchAll(/\[ACTION:RENAME_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi)
+    for (const match of renameWorkspaceMatches) {
+      const actionContent = match[1]
+      const idMatch = actionContent.match(/WorkspaceID:\s*(.+)/i)
+      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
+      
+      if (idMatch && nameMatch) {
+        const wsId = idMatch[1].trim()
+        const name = nameMatch[1].trim()
+        await renameWorkspace(wsId, name)
+      }
+    }
+
+    // Parse all DELETE_WORKSPACE actions
+    const deleteWorkspaceMatches = content.matchAll(/\[ACTION:DELETE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi)
+    for (const match of deleteWorkspaceMatches) {
+      const actionContent = match[1]
+      const idMatch = actionContent.match(/WorkspaceID:\s*(.+)/i)
+      
+      if (idMatch) {
+        const wsId = idMatch[1].trim()
+        await deleteWorkspace(wsId)
       }
     }
   }
@@ -152,23 +217,66 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChat
       return '✅ Đã xóa note'
     })
 
+    // Replace CREATE_WORKSPACE action
+    cleaned = cleaned.replace(/\[ACTION:CREATE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
+      if (nameMatch) {
+        return `✅ Đã tạo workspace: "${nameMatch[1].trim()}"`
+      }
+      return '✅ Đã tạo workspace mới'
+    })
+
+    // Replace RENAME_WORKSPACE action
+    cleaned = cleaned.replace(/\[ACTION:RENAME_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
+      if (nameMatch) {
+        return `✅ Đã đổi tên workspace thành: "${nameMatch[1].trim()}"`
+      }
+      return '✅ Đã đổi tên workspace'
+    })
+
+    // Replace DELETE_WORKSPACE action
+    cleaned = cleaned.replace(/\[ACTION:DELETE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (match, actionContent) => {
+      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
+      if (nameMatch) {
+        return `✅ Đã xóa workspace: "${nameMatch[1].trim()}"`
+      }
+      return '✅ Đã xóa workspace'
+    })
+
     return cleaned.trim()
   }
 
   const getWorkspaceContext = async () => {
     try {
-      const notesKey = `notes_${workspaceId}`
-      const notes = await puter.kv.get<any[]>(notesKey) || []
+      // Get all workspaces
+      const workspacesKey = 'workspaces'
+      const workspaces = await puter.kv.get<any[]>(workspacesKey) || []
       
-      if (notes.length === 0) {
-        return { text: 'No notes in this workspace yet.', notes: [] }
+      let contextText = '=== ALL WORKSPACES ===\n'
+      
+      // Load notes from all workspaces
+      for (const ws of workspaces) {
+        contextText += `\n[Workspace: ${ws.name}]${ws.id === workspaceId ? ' (CURRENT)' : ''}\n`
+        contextText += `Internal ID: ${ws.id}\n`
+        contextText += `Internal Name: ${ws.name}\n`
+        
+        const notesKey = `notes_${ws.id}`
+        const notes = await puter.kv.get<any[]>(notesKey) || []
+        
+        if (notes.length === 0) {
+          contextText += '  Không có ghi chú nào.\n'
+        } else {
+          notes.forEach((note, idx) => {
+            contextText += `  [Ghi chú ${idx + 1}]\n`
+            contextText += `  Internal Note ID: ${note.id}\n`
+            contextText += `  Tiêu đề: ${note.title}\n`
+            contextText += `  Nội dung: ${note.content.slice(0, 200)}${note.content.length > 200 ? '...' : ''}\n\n`
+          })
+        }
       }
-
-      const contextText = notes.map((note, idx) => 
-        `[Note ${idx + 1}] ID: ${note.id}\nTitle: ${note.title}\nContent: ${note.content.slice(0, 300)}${note.content.length > 300 ? '...' : ''}`
-      ).join('\n\n')
       
-      return { text: contextText, notes }
+      return { text: contextText, notes: [] }
     } catch (error) {
       return { text: 'Unable to load workspace context.', notes: [] }
     }
@@ -245,8 +353,85 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChat
     }
   }
 
+  const createWorkspace = async (name: string) => {
+    try {
+      const workspacesKey = 'workspaces'
+      const workspaces = await puter.kv.get<any[]>(workspacesKey) || []
+      
+      const newWorkspace = {
+        id: Date.now().toString(),
+        name,
+        createdAt: new Date().toISOString()
+      }
+      
+      const updated = [...workspaces, newWorkspace]
+      await puter.kv.set(workspacesKey, updated)
+      
+      if (onWorkspaceAction) {
+        onWorkspaceAction('create', newWorkspace)
+      }
+      
+      return newWorkspace
+    } catch (error) {
+      console.error('Failed to create workspace:', error)
+      return null
+    }
+  }
+
+  const renameWorkspace = async (workspaceId: string, name: string) => {
+    try {
+      const workspacesKey = 'workspaces'
+      const workspaces = await puter.kv.get<any[]>(workspacesKey) || []
+      
+      const updated = workspaces.map(w =>
+        w.id === workspaceId ? { ...w, name } : w
+      )
+      
+      await puter.kv.set(workspacesKey, updated)
+      
+      const updatedWorkspace = updated.find(w => w.id === workspaceId)
+      if (onWorkspaceAction && updatedWorkspace) {
+        onWorkspaceAction('rename', updatedWorkspace)
+      }
+      
+      return updatedWorkspace
+    } catch (error) {
+      console.error('Failed to rename workspace:', error)
+      return null
+    }
+  }
+
+  const deleteWorkspace = async (workspaceId: string) => {
+    try {
+      const workspacesKey = 'workspaces'
+      const workspaces = await puter.kv.get<any[]>(workspacesKey) || []
+      
+      if (workspaces.length === 1) {
+        return false // Cannot delete last workspace
+      }
+      
+      // Get workspace name before deleting
+      const workspaceToDelete = workspaces.find(w => w.id === workspaceId)
+      const workspaceName = workspaceToDelete?.name || 'Unknown'
+      
+      const updated = workspaces.filter(w => w.id !== workspaceId)
+      await puter.kv.set(workspacesKey, updated)
+      
+      if (onWorkspaceAction) {
+        onWorkspaceAction('delete', { id: workspaceId, name: workspaceName })
+      }
+      
+      return true
+    } catch (error) {
+      console.error('Failed to delete workspace:', error)
+      return false
+    }
+  }
+
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
+
+    setShowQuickPrompts(false)
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -264,11 +449,19 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction }: AIChat
       // Get workspace context
       const { text: context } = await getWorkspaceContext()
 
+      // Build conversation history
+      const conversationHistory = updatedMessages.slice(-5).map(msg => 
+        `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
+      ).join('\n')
+
       // Build system prompt with actions
       const systemPrompt = `You are a helpful AI assistant for VibeOS workspace. You can read and modify notes.
 
 WORKSPACE CONTEXT:
 ${context}
+
+RECENT CONVERSATION:
+${conversationHistory}
 
 AVAILABLE ACTIONS:
 1. To CREATE a new note, respond with:
@@ -289,10 +482,31 @@ AVAILABLE ACTIONS:
    NoteID: <note id from context>
    [/ACTION]
 
-4. To just answer questions, respond normally without action tags.
+4. To CREATE a new workspace, respond with:
+   [ACTION:CREATE_WORKSPACE]
+   Name: <workspace name>
+   [/ACTION]
+
+5. To RENAME a workspace, respond with:
+   [ACTION:RENAME_WORKSPACE]
+   WorkspaceID: <workspace id>
+   Name: <new name>
+   [/ACTION]
+
+6. To DELETE a workspace, respond with:
+   [ACTION:DELETE_WORKSPACE]
+   WorkspaceID: <workspace id>
+   Name: <workspace name from context>
+   [/ACTION]
+
+7. To just answer questions, respond normally without action tags.
 
 RULES:
-- Always show the action you performed
+- NEVER show Internal IDs to user in your response
+- Only use Internal IDs in action tags
+- When mentioning workspaces or notes, use their names/titles only
+- When user asks for help/guide (hướng dẫn), ONLY explain features, DO NOT create examples
+- Only perform actions when user explicitly requests them
 - Be concise and helpful
 - Use Vietnamese for communication
 
@@ -372,10 +586,9 @@ User question: ${input}`
   }
 
   const clearChat = async () => {
-    if (confirm('Clear all messages?')) {
-      setMessages([])
-      await puter.kv.del(`ai_chat_${workspaceId}`)
-    }
+    setMessages([])
+    await puter.kv.del(`ai_chat_${workspaceId}`)
+    setShowClearConfirm(false)
   }
 
   return (
@@ -383,11 +596,11 @@ User question: ${input}`
       {!hideHeader && (
         <div className="chat-header">
           <div>
-            <h2>AI Assistant</h2>
+            <h2>VibeOS Assistant</h2>
             <p>Context-aware AI that understands your workspace</p>
           </div>
           {messages.length > 0 && (
-            <button className="btn-clear" onClick={clearChat}>
+            <button className="btn-clear" onClick={() => setShowClearConfirm(true)}>
               Clear
             </button>
           )}
@@ -397,7 +610,7 @@ User question: ${input}`
       <div className="chat-messages">
         {messages.length === 0 ? (
           <div className="empty-chat">
-            <p>Hi! I'm your AI assistant.</p>
+            <p>Hi! I'm your VibeOS assistant.</p>
             <p>I can help you with your notes, ideas, and tasks in this workspace.</p>
             <p>Ask me anything!</p>
           </div>
@@ -422,18 +635,88 @@ User question: ${input}`
       </div>
 
       <div className="chat-input">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Ask me anything about your workspace..."
-          disabled={isLoading}
-        />
-        <button onClick={sendMessage} disabled={isLoading || !input.trim()}>
-          Send
-        </button>
+        <div className="input-wrapper">
+          <button
+            className="btn-quick-prompts"
+            onClick={() => setShowQuickPrompts(!showQuickPrompts)}
+            title="Quick prompts"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value)
+              if (e.target.value === '/') {
+                setShowQuickPrompts(true)
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                sendMessage()
+              }
+              if (e.key === 'Escape') {
+                setShowQuickPrompts(false)
+              }
+            }}
+            placeholder="Ask anything or press + for quick actions..."
+            disabled={isLoading}
+          />
+          <button 
+            className="btn-send"
+            onClick={sendMessage} 
+            disabled={isLoading || !input.trim()}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M14.5 1.5L7 9M14.5 1.5L10 14.5L7 9M14.5 1.5L1.5 6L7 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        
+        {showQuickPrompts && (
+          <div className="quick-prompts-popup">
+            <div className="prompts-header">
+              <span>Quick Actions</span>
+              <button onClick={() => setShowQuickPrompts(false)}>×</button>
+            </div>
+            <div className="prompts-grid">
+              {quickPrompts.map(prompt => (
+                <button
+                  key={prompt.key}
+                  className="prompt-btn"
+                  onClick={() => {
+                    setInput(prompt.prompt)
+                    setShowQuickPrompts(false)
+                  }}
+                >
+                  {prompt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      <AlertDialog open={showClearConfirm} onOpenChange={setShowClearConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear all messages?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will delete all chat history in this workspace. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={clearChat}>
+              Clear
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

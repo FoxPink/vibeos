@@ -7,15 +7,23 @@ import './WorkspaceView.css'
 
 interface WorkspaceViewProps {
   workspace: Workspace
+  onWorkspaceAction?: (action: 'create' | 'rename' | 'delete', workspaceData: any) => void
 }
 
-export const WorkspaceView = ({ workspace }: WorkspaceViewProps) => {
+export const WorkspaceView = ({ workspace, onWorkspaceAction }: WorkspaceViewProps) => {
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null)
   const [showChatBubble, setShowChatBubble] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [notesRefreshTrigger, setNotesRefreshTrigger] = useState(0)
   const [notesWidth, setNotesWidth] = useState(320)
   const [isResizing, setIsResizing] = useState(false)
+  const [isNotesCollapsed, setIsNotesCollapsed] = useState(false)
+
+  // Reset when workspace changes
+  useEffect(() => {
+    setActiveNoteId(null)
+    setNotesRefreshTrigger(prev => prev + 1)
+  }, [workspace.id])
 
   const handleNoteSaved = () => {
     // Trigger notes list refresh without remounting
@@ -34,6 +42,13 @@ export const WorkspaceView = ({ workspace }: WorkspaceViewProps) => {
     // If deleting active note, clear selection
     if (action === 'delete' && activeNoteId === noteData.id) {
       setActiveNoteId(null)
+    }
+  }
+
+  const handleWorkspaceAction = (action: 'create' | 'rename' | 'delete', workspaceData: any) => {
+    // Forward to parent
+    if (onWorkspaceAction) {
+      onWorkspaceAction(action, workspaceData)
     }
   }
 
@@ -82,30 +97,53 @@ export const WorkspaceView = ({ workspace }: WorkspaceViewProps) => {
       </div>
 
       <div className="workspace-content">
-        <div className="notes-layout" style={{ gridTemplateColumns: `${notesWidth}px 1fr` }}>
-          <NotesList
-            workspaceId={workspace.id}
-            activeNoteId={activeNoteId}
-            onNoteSelect={setActiveNoteId}
-            refreshTrigger={notesRefreshTrigger}
-          />
-          <div 
-            className="resize-handle"
-            onMouseDown={handleMouseDown}
-          />
-          <NoteEditor
-            workspaceId={workspace.id}
-            noteId={activeNoteId}
-            onNoteSaved={handleNoteSaved}
-            refreshTrigger={notesRefreshTrigger}
-          />
+        <div 
+          className="notes-layout" 
+          data-collapsed={isNotesCollapsed}
+          style={{ '--notes-width': `${notesWidth}px` } as React.CSSProperties}
+        >
+          <div className="notes-column" style={{ width: isNotesCollapsed ? '0px' : `${notesWidth}px` }}>
+            <NotesList
+              workspaceId={workspace.id}
+              activeNoteId={activeNoteId}
+              onNoteSelect={setActiveNoteId}
+              refreshTrigger={notesRefreshTrigger}
+            />
+          </div>
+          {!isNotesCollapsed && (
+            <div 
+              className="resize-handle"
+              onMouseDown={handleMouseDown}
+            />
+          )}
+          <button 
+            className="toggle-notes-btn"
+            onClick={() => setIsNotesCollapsed(!isNotesCollapsed)}
+            title={isNotesCollapsed ? 'Show Notes' : 'Hide Notes'}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              {isNotesCollapsed ? (
+                <path d="M4 2L8 6L4 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              ) : (
+                <path d="M8 2L4 6L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              )}
+            </svg>
+          </button>
+          <div className="editor-column">
+            <NoteEditor
+              workspaceId={workspace.id}
+              noteId={activeNoteId}
+              onNoteSaved={handleNoteSaved}
+              refreshTrigger={notesRefreshTrigger}
+            />
+          </div>
         </div>
         
         {/* Floating Chat Bubble */}
         {showChatBubble && (
           <div className={`chat-bubble-container ${isExpanded ? 'expanded' : ''}`}>
             <div className="chat-bubble-header">
-              <span>AI Assistant</span>
+              <span>VibeOS Assistant</span>
               <div className="chat-bubble-actions">
                 <button 
                   className="btn-expand"
@@ -131,6 +169,7 @@ export const WorkspaceView = ({ workspace }: WorkspaceViewProps) => {
                 workspaceId={workspace.id} 
                 hideHeader={true}
                 onNoteAction={handleNoteAction}
+                onWorkspaceAction={handleWorkspaceAction}
               />
             </div>
           </div>

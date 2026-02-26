@@ -133,6 +133,13 @@
     align-items: center;
   }
 
+  .nav-user {
+    color: #F2F7FF;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
   .btn-small {
     padding: 10px 20px;
     font-size: 14px;

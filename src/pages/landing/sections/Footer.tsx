@@ -55,7 +55,7 @@ export const Footer = () => {
 
         <div className="footer-bottom">
           <p className="footer-copyright">
-            © 2026 VibeOS. Built with ❤️ for indie builders.
+            © 2026 VibeOS. Built by FoxPink.
           </p>
         </div>
       </div>

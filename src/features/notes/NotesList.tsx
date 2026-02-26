@@ -1,5 +1,16 @@
 import { useState, useEffect } from 'react'
 import puter from '@heyputer/puter.js'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import '@/components/ui/alert-dialog-custom.css'
 import './NotesList.css'
 
 interface Note {
@@ -20,6 +31,7 @@ interface NotesListProps {
 export const NotesList = ({ workspaceId, activeNoteId, onNoteSelect, refreshTrigger }: NotesListProps) => {
   const [notes, setNotes] = useState<Note[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; title: string } | null>(null)
 
   useEffect(() => {
     loadNotes()
@@ -41,9 +53,13 @@ export const NotesList = ({ workspaceId, activeNoteId, onNoteSelect, refreshTrig
         if (saved.length > 0 && !activeNoteId) {
           onNoteSelect(saved[0].id)
         }
+      } else {
+        // Clear notes if workspace has no notes
+        setNotes([])
       }
     } catch (error) {
       console.error('Failed to load notes:', error)
+      setNotes([])
     } finally {
       setIsLoading(false)
     }
@@ -106,9 +122,7 @@ export const NotesList = ({ workspaceId, activeNoteId, onNoteSelect, refreshTrig
                 className="btn-delete-note"
                 onClick={(e) => {
                   e.stopPropagation()
-                  if (confirm(`Delete "${note.title}"?`)) {
-                    deleteNote(note.id)
-                  }
+                  setDeleteConfirm({ id: note.id, title: note.title })
                 }}
               >
                 ×
@@ -117,6 +131,30 @@ export const NotesList = ({ workspaceId, activeNoteId, onNoteSelect, refreshTrig
           ))
         )}
       </div>
+
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Workspace?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Delete "{deleteConfirm?.title}"?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteConfirm) {
+                  deleteNote(deleteConfirm.id)
+                  setDeleteConfirm(null)
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

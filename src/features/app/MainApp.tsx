@@ -68,6 +68,45 @@ export const MainApp = () => {
     await puter.kv.set('workspaces', updated)
   }
 
+  const renameWorkspace = async (id: string, name: string) => {
+    const updated = workspaces.map(w =>
+      w.id === id ? { ...w, name } : w
+    )
+    setWorkspaces(updated)
+    await puter.kv.set('workspaces', updated)
+  }
+
+  const handleWorkspaceAction = async (action: 'create' | 'rename' | 'delete', workspaceData: any) => {
+    if (action === 'create') {
+      setWorkspaces(prev => [...prev, workspaceData])
+      setActiveWorkspaceId(workspaceData.id)
+    } else if (action === 'rename') {
+      setWorkspaces(prev => prev.map(w => 
+        w.id === workspaceData.id ? workspaceData : w
+      ))
+    } else if (action === 'delete') {
+      const updated = workspaces.filter(w => w.id !== workspaceData.id)
+      
+      // If no workspaces left, create default workspace
+      if (updated.length === 0) {
+        const defaultWorkspace: Workspace = {
+          id: Date.now().toString(),
+          name: 'My Workspace',
+          createdAt: new Date().toISOString()
+        }
+        setWorkspaces([defaultWorkspace])
+        setActiveWorkspaceId(defaultWorkspace.id)
+        await puter.kv.set('workspaces', [defaultWorkspace])
+      } else {
+        setWorkspaces(updated)
+        if (activeWorkspaceId === workspaceData.id) {
+          setActiveWorkspaceId(updated[0].id)
+        }
+        await puter.kv.set('workspaces', updated)
+      }
+    }
+  }
+
   const activeWorkspace = workspaces.find(w => w.id === activeWorkspaceId)
 
   if (isLoading) {
@@ -82,10 +121,14 @@ export const MainApp = () => {
         onWorkspaceSelect={setActiveWorkspaceId}
         onWorkspaceCreate={createWorkspace}
         onWorkspaceDelete={deleteWorkspace}
+        onWorkspaceRename={renameWorkspace}
       />
       <div className="main-content">
         {activeWorkspace && (
-          <WorkspaceView workspace={activeWorkspace} />
+          <WorkspaceView 
+            workspace={activeWorkspace}
+            onWorkspaceAction={handleWorkspaceAction}
+          />
         )}
       </div>
     </div>

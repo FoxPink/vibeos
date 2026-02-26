@@ -1,5 +1,16 @@
 import { useState } from 'react'
 import type { Workspace } from '../MainApp'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import '@/components/ui/alert-dialog-custom.css'
 import './Sidebar.css'
 
 interface SidebarProps {
@@ -8,6 +19,7 @@ interface SidebarProps {
   onWorkspaceSelect: (id: string) => void
   onWorkspaceCreate: (name: string) => void
   onWorkspaceDelete: (id: string) => void
+  onWorkspaceRename: (id: string, name: string) => void
 }
 
 export const Sidebar = ({
@@ -15,10 +27,14 @@ export const Sidebar = ({
   activeWorkspaceId,
   onWorkspaceSelect,
   onWorkspaceCreate,
-  onWorkspaceDelete
+  onWorkspaceDelete,
+  onWorkspaceRename
 }: SidebarProps) => {
   const [isCreating, setIsCreating] = useState(false)
   const [newWorkspaceName, setNewWorkspaceName] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editName, setEditName] = useState('')
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null)
 
   const handleCreate = () => {
     if (newWorkspaceName.trim()) {
@@ -28,13 +44,21 @@ export const Sidebar = ({
     }
   }
 
+  const handleRename = (id: string) => {
+    if (editName.trim()) {
+      onWorkspaceRename(id, editName.trim())
+      setEditingId(null)
+      setEditName('')
+    }
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <div className="logo-small">
+        <a href="/" className="logo-small">
           <div className="logo-icon">V</div>
           <span className="logo-text">VibeOS</span>
-        </div>
+        </a>
       </div>
 
       <div className="sidebar-section">
@@ -76,24 +100,76 @@ export const Sidebar = ({
               className={`workspace-item ${workspace.id === activeWorkspaceId ? 'active' : ''}`}
               onClick={() => onWorkspaceSelect(workspace.id)}
             >
-              <span className="workspace-name">{workspace.name}</span>
-              {workspaces.length > 1 && (
-                <button
-                  className="btn-delete"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (confirm(`Delete "${workspace.name}"?`)) {
-                      onWorkspaceDelete(workspace.id)
+              {editingId === workspace.id ? (
+                <input
+                  type="text"
+                  className="workspace-rename-input"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleRename(workspace.id)
+                    if (e.key === 'Escape') {
+                      setEditingId(null)
+                      setEditName('')
                     }
                   }}
-                >
-                  ×
-                </button>
+                  onBlur={() => handleRename(workspace.id)}
+                  onClick={(e) => e.stopPropagation()}
+                  autoFocus
+                />
+              ) : (
+                <>
+                  <span 
+                    className="workspace-name"
+                    onDoubleClick={(e) => {
+                      e.stopPropagation()
+                      setEditingId(workspace.id)
+                      setEditName(workspace.name)
+                    }}
+                  >
+                    {workspace.name}
+                  </span>
+                  {workspaces.length > 1 && (
+                    <button
+                      className="btn-delete"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setDeleteConfirm({ id: workspace.id, name: workspace.name })
+                      }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </>
               )}
             </div>
           ))}
         </div>
       </div>
+
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Workspace?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Delete "{deleteConfirm?.name}"?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteConfirm) {
+                  onWorkspaceDelete(deleteConfirm.id)
+                  setDeleteConfirm(null)
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </aside>
   )
 }

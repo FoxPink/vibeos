@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
+import puter from '@heyputer/puter.js'
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -10,6 +11,7 @@ const navLinks = [
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +19,20 @@ export const Navbar = () => {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const currentUser = await puter.auth.getUser()
+        if (currentUser) {
+          setUser(currentUser)
+        }
+      } catch (error) {
+        console.log('Not logged in')
+      }
+    }
+    checkAuth()
   }, [])
 
   return (
@@ -37,8 +53,17 @@ export const Navbar = () => {
           </div>
 
           <div className="navbar-actions">
-            <a href="/auth" className="nav-link">Sign in</a>
-            <a href="/auth" className="btn-primary btn-small">Get started</a>
+            {user ? (
+              <>
+                <span className="nav-user">Hi, {user.username}</span>
+                <a href="/app" className="btn-primary btn-small">Open App</a>
+              </>
+            ) : (
+              <>
+                <a href="/auth" className="nav-link">Sign in</a>
+                <a href="/auth" className="btn-primary btn-small">Get started</a>
+              </>
+            )}
           </div>
 
           <button 
@@ -63,7 +88,11 @@ export const Navbar = () => {
                 {link.label}
               </a>
             ))}
-            <a href="/auth" className="btn-primary btn-block">Get started</a>
+            {user ? (
+              <a href="/app" className="btn-primary btn-block">Open App</a>
+            ) : (
+              <a href="/auth" className="btn-primary btn-block">Get started</a>
+            )}
           </div>
         </div>
       )}

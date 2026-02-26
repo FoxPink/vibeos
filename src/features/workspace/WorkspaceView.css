@@ -41,12 +41,31 @@
 }
 
 .notes-layout {
-  display: grid;
-  grid-template-columns: 320px 1fr;
+  display: flex;
   height: 100%;
-  gap: 0;
-  background: rgba(255, 255, 255, 0.1);
   position: relative;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notes-column {
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.notes-column > * {
+  transition: opacity 0.2s ease;
+}
+
+.notes-layout[data-collapsed="true"] .notes-column > * {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.editor-column {
+  flex: 1;
+  overflow: hidden;
 }
 
 .resize-handle {
@@ -54,8 +73,15 @@
   background: transparent;
   cursor: col-resize;
   position: relative;
-  transition: background 0.2s;
+  transition: all 0.2s;
   z-index: 10;
+  flex-shrink: 0;
+  opacity: 1;
+}
+
+.notes-layout[data-collapsed="true"] .resize-handle {
+  width: 0;
+  opacity: 0;
 }
 
 .resize-handle:hover {
@@ -64,6 +90,50 @@
 
 .resize-handle:active {
   background: rgba(46, 233, 255, 0.5);
+}
+
+.toggle-notes-btn {
+  position: absolute;
+  left: calc(var(--notes-width, 320px));
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 56px;
+  background: rgba(7, 10, 18, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(46, 233, 255, 0.2);
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  color: rgba(46, 233, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notes-layout[data-collapsed="true"] .toggle-notes-btn {
+  left: 0;
+  border-left: 1px solid rgba(46, 233, 255, 0.2);
+}
+
+.toggle-notes-btn:hover {
+  background: rgba(46, 233, 255, 0.1);
+  border-color: rgba(46, 233, 255, 0.4);
+  color: #2EE9FF;
+}
+
+.toggle-notes-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.toggle-notes-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.toggle-notes-btn:hover svg {
+  transform: translateX(2px);
 }
 
 /* Floating Chat Bubble */

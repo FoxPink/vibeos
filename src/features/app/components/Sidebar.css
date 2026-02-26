@@ -21,6 +21,12 @@
   font-size: 20px;
   color: #F2F7FF;
   font-family: 'Space Grotesk', sans-serif;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.logo-small:hover {
+  opacity: 0.8;
 }
 
 .logo-icon {
@@ -216,4 +222,21 @@
 .btn-delete:hover {
   opacity: 1 !important;
   background: rgba(255, 107, 107, 0.2);
+}
+
+.workspace-rename-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(15, 20, 35, 0.8);
+  border: 1px solid rgba(46, 233, 255, 0.5);
+  border-radius: 6px;
+  color: #F2F7FF;
+  font-size: 14px;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.workspace-rename-input:focus {
+  border-color: #2EE9FF;
+  background: rgba(15, 20, 35, 0.95);
 }
