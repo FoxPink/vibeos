@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import puter from '@heyputer/puter.js'
 import type { Workspace } from '../MainApp'
 import {
   AlertDialog,
@@ -145,6 +146,18 @@ export const Sidebar = ({
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="sidebar-footer">
+        <button 
+          className="btn-logout"
+          onClick={async () => {
+            await puter.auth.signOut()
+            window.location.href = '/'
+          }}
+        >
+          Logout
+        </button>
       </div>
 
       <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>

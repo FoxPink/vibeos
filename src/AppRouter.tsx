@@ -4,6 +4,7 @@ import puter from '@heyputer/puter.js'
 import { LandingPage } from './pages/landing/LandingPage'
 import { AuthScreen } from './features/auth/AuthScreen'
 import { MainApp } from './features/app/MainApp'
+import { DocsPage } from './pages/docs/DocsPage'
 
 export const AppRouter = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -54,6 +55,9 @@ export const AppRouter = () => {
       <Routes>
         {/* Landing page - public */}
         <Route path="/" element={<LandingPage />} />
+        
+        {/* Documentation - public */}
+        <Route path="/docs" element={<DocsPage />} />
         
         {/* Auth - redirect if already authenticated */}
         <Route 

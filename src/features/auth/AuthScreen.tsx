@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import puter from '@heyputer/puter.js'
+import { Sparkles, Zap, Rocket } from 'lucide-react'
 import './AuthScreen.css'
 
 interface AuthScreenProps {
@@ -15,7 +16,6 @@ export const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
     setError('')
 
     try {
-      // Puter.js handles authentication UI
       await puter.auth.signIn()
       onAuthSuccess()
     } catch (err) {
@@ -28,38 +28,51 @@ export const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
 
   return (
     <div className="auth-screen">
+      <div className="auth-background">
+        <div className="gradient-blur gradient-blur-1"></div>
+        <div className="gradient-blur gradient-blur-2"></div>
+      </div>
+
       <div className="auth-container">
-        <div className="auth-header">
-          <div className="logo">
-            <div className="logo-icon">V</div>
-            <h1>VibeOS</h1>
+        <a href="/" className="auth-logo">
+          <div className="logo-icon">V</div>
+          <span className="logo-text">VibeOS</span>
+        </a>
+
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1>Welcome to VibeOS</h1>
+            <p>Your AI-native workspace for building amazing things</p>
           </div>
-          <p className="tagline">Your AI-powered creative command center</p>
-        </div>
 
-        <div className="auth-content">
-          <h2>Welcome to VibeOS</h2>
-          <p className="subtitle">
-            The AI-native workspace designed for indie builders, creators, and solo founders.
-          </p>
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon-wrapper">
+                <Sparkles size={24} />
+              </div>
+              <h3>AI-Powered</h3>
+              <p>Context-aware assistant that understands your work</p>
+            </div>
 
-          <div className="features-list">
-            <div className="feature-item">
-              <span className="feature-icon">AI</span>
-              <span>Context-aware AI that understands your work</span>
+            <div className="feature-card">
+              <div className="feature-icon-wrapper">
+                <Zap size={24} />
+              </div>
+              <h3>Lightning Fast</h3>
+              <p>Modular workspace built for speed</p>
             </div>
-            <div className="feature-item">
-              <span className="feature-icon">FAST</span>
-              <span>Lightning-fast, modular workspace</span>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon">BUILD</span>
-              <span>Built for people building online</span>
+
+            <div className="feature-card">
+              <div className="feature-icon-wrapper">
+                <Rocket size={24} />
+              </div>
+              <h3>Built for Builders</h3>
+              <p>Perfect for indie makers and creators</p>
             </div>
           </div>
 
           <button 
-            className="auth-button"
+            className="btn-auth"
             onClick={handleSignIn}
             disabled={isLoading}
           >
@@ -68,8 +81,8 @@ export const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
 
           {error && <p className="error-message">{error}</p>}
 
-          <p className="auth-footer">
-            Free to start - No credit card required
+          <p className="auth-note">
+            Free to start • No credit card required
           </p>
         </div>
       </div>

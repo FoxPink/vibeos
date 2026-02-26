@@ -37,7 +37,7 @@ export const Footer = () => {
 
             <div className="footer-column">
               <h4 className="footer-title">Resources</h4>
-              <a href="#" className="footer-link">Documentation</a>
+              <a href="/docs" className="footer-link">Documentation</a>
               <a href="#" className="footer-link">API Reference</a>
               <a href="#" className="footer-link">Guides</a>
               <a href="#" className="footer-link">Blog</a>
