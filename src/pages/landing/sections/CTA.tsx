@@ -1,31 +1,8 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowRight, Check, Sparkles, Zap, Shield } from 'lucide-react'
-
-gsap.registerPlugin(ScrollTrigger)
+import { useScrollAnimation } from '../../../hooks/useScrollAnimation'
 
 export const CTA = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(contentRef.current?.children || [], {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-        },
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out'
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
+  const { ref: sectionRef, isVisible } = useScrollAnimation()
 
   return (
     <section ref={sectionRef} id="pricing" className="cta-section">
@@ -39,7 +16,7 @@ export const CTA = () => {
       </div>
 
       <div className="section-container">
-        <div ref={contentRef} className="cta-content">
+        <div className={`cta-content animate-stagger ${isVisible ? 'is-visible' : ''}`}>
           <div className="cta-badge">
             <Sparkles className="badge-icon" />
             <span>START BUILDING TODAY</span>

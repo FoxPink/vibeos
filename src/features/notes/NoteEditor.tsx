@@ -13,9 +13,11 @@ interface Note {
 interface NoteEditorProps {
   workspaceId: string
   noteId: string | null
+  onNoteSaved?: () => void
+  refreshTrigger?: number
 }
 
-export const NoteEditor = ({ workspaceId, noteId }: NoteEditorProps) => {
+export const NoteEditor = ({ workspaceId, noteId, onNoteSaved, refreshTrigger }: NoteEditorProps) => {
   const [note, setNote] = useState<Note | null>(null)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -26,6 +28,13 @@ export const NoteEditor = ({ workspaceId, noteId }: NoteEditorProps) => {
       loadNote()
     }
   }, [noteId, workspaceId])
+
+  // Reload when external changes happen (AI updates)
+  useEffect(() => {
+    if (refreshTrigger !== undefined && refreshTrigger > 0 && noteId) {
+      loadNote()
+    }
+  }, [refreshTrigger])
 
   const loadNote = async () => {
     if (!noteId) return
@@ -57,6 +66,11 @@ export const NoteEditor = ({ workspaceId, noteId }: NoteEditorProps) => {
           : n
       )
       await puter.kv.set(key, updated)
+      
+      // Notify parent to refresh notes list
+      if (onNoteSaved) {
+        onNoteSaved()
+      }
     } catch (error) {
       console.error('Failed to save note:', error)
     } finally {
@@ -93,9 +107,6 @@ export const NoteEditor = ({ workspaceId, noteId }: NoteEditorProps) => {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Untitled Note"
         />
-        <div className="editor-status">
-          {isSaving ? 'Saving...' : 'Saved'}
-        </div>
       </div>
 
       <textarea

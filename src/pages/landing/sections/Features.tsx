@@ -1,9 +1,5 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Brain, Clock, Shield, Users, Smartphone, Globe } from 'lucide-react'
-
-gsap.registerPlugin(ScrollTrigger)
+import { useScrollAnimation } from '../../../hooks/useScrollAnimation'
 
 const features = [
   {
@@ -45,40 +41,8 @@ const features = [
 ]
 
 export const Features = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
-  const cardsRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    // Temporarily disable animations to debug
-    const ctx = gsap.context(() => {
-      // gsap.from(headerRef.current?.children || [], {
-      //   scrollTrigger: {
-      //     trigger: sectionRef.current,
-      //     start: 'top 80%',
-      //   },
-      //   opacity: 0,
-      //   y: 30,
-      //   duration: 0.8,
-      //   stagger: 0.2,
-      //   ease: 'power3.out'
-      // })
-
-      // gsap.from(cardsRef.current?.children || [], {
-      //   scrollTrigger: {
-      //     trigger: cardsRef.current,
-      //     start: 'top 85%',
-      //   },
-      //   opacity: 0,
-      //   y: 40,
-      //   duration: 0.6,
-      //   stagger: 0.15,
-      //   ease: 'power3.out'
-      // })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
+  const { ref: sectionRef, isVisible: sectionVisible } = useScrollAnimation()
+  const { ref: cardsRef, isVisible: cardsVisible } = useScrollAnimation({ threshold: 0.2 })
 
   return (
     <section ref={sectionRef} id="features" className="features-section">
@@ -88,7 +52,7 @@ export const Features = () => {
       </div>
 
       <div className="section-container">
-        <div ref={headerRef} className="section-header">
+        <div className={`section-header animate-stagger ${sectionVisible ? 'is-visible' : ''}`}>
           <span className="eyebrow">FEATURES</span>
           <h2 className="section-title">
             Everything you need<br />in one place
@@ -98,7 +62,7 @@ export const Features = () => {
           </p>
         </div>
 
-        <div ref={cardsRef} className="features-grid">
+        <div ref={cardsRef as any} className={`features-grid animate-stagger ${cardsVisible ? 'is-visible' : ''}`}>
           {features.map((feature, index) => (
             <div key={index} className="feature-card glass-card">
               <div className="feature-visual-bg" data-visual={feature.visual} />

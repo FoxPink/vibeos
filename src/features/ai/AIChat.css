@@ -2,41 +2,46 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg-primary);
+  background: #070A12;
 }
 
 .chat-header {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .chat-header h2 {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   margin: 0 0 4px 0;
+  color: #F2F7FF;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .chat-header p {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: rgba(242, 247, 255, 0.6);
   margin: 0;
 }
 
 .btn-clear {
-  padding: 6px 12px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  padding: 8px 16px;
+  background: rgba(46, 233, 255, 0.1);
+  border: 1px solid rgba(46, 233, 255, 0.2);
+  border-radius: 6px;
   font-size: 13px;
+  color: #2EE9FF;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .btn-clear:hover {
-  background: var(--bg-hover);
+  background: rgba(46, 233, 255, 0.15);
+  border-color: rgba(46, 233, 255, 0.3);
 }
 
 .chat-messages {
@@ -48,20 +53,46 @@
   gap: 16px;
 }
 
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(46, 233, 255, 0.2);
+  border-radius: 4px;
+}
+
 .empty-chat {
   text-align: center;
-  color: var(--text-secondary);
+  color: rgba(242, 247, 255, 0.6);
   padding: 48px 24px;
 }
 
 .empty-chat p {
-  margin: 8px 0;
+  margin: 12px 0;
   font-size: 16px;
+  line-height: 1.6;
 }
 
 .message {
   display: flex;
-  max-width: 80%;
+  max-width: 75%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .message.user {
@@ -73,22 +104,25 @@
 }
 
 .message-content {
-  padding: 12px 16px;
+  padding: 14px 18px;
   border-radius: 12px;
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .message.user .message-content {
-  background: var(--accent);
-  color: white;
+  background: linear-gradient(135deg, #2EE9FF 0%, #1BC8E0 100%);
+  color: #070A12;
+  font-weight: 500;
 }
 
 .message.assistant .message-content {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  background: rgba(15, 20, 35, 0.6);
+  backdrop-filter: blur(10px);
+  color: #F2F7FF;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .message-content.typing {
@@ -101,41 +135,51 @@
 }
 
 .chat-input {
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-color);
+  padding: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   gap: 12px;
+  background: rgba(7, 10, 18, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .chat-input input {
   flex: 1;
-  padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  padding: 14px 18px;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   font-size: 15px;
+  color: #F2F7FF;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s;
+}
+
+.chat-input input::placeholder {
+  color: rgba(242, 247, 255, 0.4);
 }
 
 .chat-input input:focus {
-  border-color: var(--accent);
+  border-color: rgba(46, 233, 255, 0.5);
+  background: rgba(15, 20, 35, 0.8);
 }
 
 .chat-input button {
-  padding: 12px 24px;
-  background: var(--accent);
-  color: white;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #2EE9FF 0%, #1BC8E0 100%);
+  color: #070A12;
   border: none;
   border-radius: 8px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .chat-input button:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(46, 233, 255, 0.3);
 }
 
 .chat-input button:disabled {

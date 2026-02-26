@@ -1,159 +1,219 @@
 .sidebar {
-  width: 240px;
+  width: 260px;
   height: 100vh;
-  background: var(--bg-secondary);
-  border-right: 1px solid var(--border-color);
+  background: rgba(7, 10, 18, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
+  backdrop-filter: blur(10px);
 }
 
 .sidebar-header {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo-small {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 20px;
+  color: #F2F7FF;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .logo-icon {
-  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #2EE9FF 0%, #1BC8E0 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #070A12;
+  font-weight: 700;
+  font-size: 18px;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .sidebar-section {
-  padding: 16px;
+  padding: 20px;
   flex: 1;
   overflow-y: auto;
+}
+
+.sidebar-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-section::-webkit-scrollbar-thumb {
+  background: rgba(46, 233, 255, 0.2);
+  border-radius: 3px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .section-header h3 {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: rgba(242, 247, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .btn-icon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border: none;
-  background: transparent;
+  background: rgba(46, 233, 255, 0.1);
   cursor: pointer;
-  font-size: 20px;
-  color: var(--text-secondary);
+  font-size: 18px;
+  color: #2EE9FF;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
+  border-radius: 6px;
+  transition: all 0.3s;
+  font-weight: 600;
 }
 
 .btn-icon:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  background: rgba(46, 233, 255, 0.2);
+  transform: scale(1.05);
 }
 
 .workspace-create {
-  margin-bottom: 12px;
-  padding: 8px;
-  background: var(--bg-primary);
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(15, 20, 35, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .workspace-create input {
   width: 100%;
-  padding: 6px 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  padding: 10px 12px;
+  background: rgba(7, 10, 18, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
   font-size: 14px;
-  margin-bottom: 8px;
+  color: #F2F7FF;
+  margin-bottom: 10px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.workspace-create input::placeholder {
+  color: rgba(242, 247, 255, 0.4);
+}
+
+.workspace-create input:focus {
+  border-color: rgba(46, 233, 255, 0.5);
 }
 
 .create-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .create-actions button {
   flex: 1;
-  padding: 4px 8px;
-  font-size: 12px;
+  padding: 8px 12px;
+  font-size: 13px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .create-actions button:first-child {
-  background: var(--accent);
-  color: white;
+  background: linear-gradient(135deg, #2EE9FF 0%, #1BC8E0 100%);
+  color: #070A12;
+}
+
+.create-actions button:first-child:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(46, 233, 255, 0.3);
 }
 
 .create-actions button:last-child {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(242, 247, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.create-actions button:last-child:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .workspace-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .workspace-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 12px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  border: 1px solid transparent;
 }
 
 .workspace-item:hover {
-  background: var(--bg-hover);
+  background: rgba(46, 233, 255, 0.05);
+  border-color: rgba(46, 233, 255, 0.1);
 }
 
 .workspace-item.active {
-  background: var(--accent);
-  color: white;
+  background: rgba(46, 233, 255, 0.15);
+  border-color: rgba(46, 233, 255, 0.3);
 }
 
 .workspace-name {
   font-size: 14px;
   font-weight: 500;
+  color: #F2F7FF;
 }
 
 .btn-delete {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: none;
-  background: transparent;
-  color: inherit;
+  background: rgba(255, 107, 107, 0.1);
+  color: #FF6B6B;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .workspace-item:hover .btn-delete {
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .btn-delete:hover {
   opacity: 1 !important;
+  background: rgba(255, 107, 107, 0.2);
 }

@@ -32,7 +32,7 @@ export const Sidebar = ({
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="logo-small">
-          <span className="logo-icon">⚡</span>
+          <div className="logo-icon">V</div>
           <span className="logo-text">VibeOS</span>
         </div>
       </div>

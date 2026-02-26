@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg-primary);
+  background: #070A12;
 }
 
 .note-editor.empty {
@@ -13,52 +13,71 @@
 
 .empty-editor {
   text-align: center;
-  color: var(--text-secondary);
+  color: rgba(242, 247, 255, 0.6);
+  font-size: 15px;
 }
 
 .editor-header {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 20px 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(7, 10, 18, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .note-title-input {
   flex: 1;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   border: none;
   outline: none;
   background: transparent;
-  color: var(--text-primary);
+  color: #F2F7FF;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .note-title-input::placeholder {
-  color: var(--text-secondary);
+  color: rgba(242, 247, 255, 0.3);
 }
 
 .editor-status {
   font-size: 12px;
-  color: var(--text-secondary);
-  padding: 4px 8px;
-  background: var(--bg-secondary);
-  border-radius: 4px;
+  color: rgba(242, 247, 255, 0.6);
+  padding: 6px 12px;
+  background: rgba(46, 233, 255, 0.1);
+  border-radius: 6px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
 }
 
 .note-content-input {
   flex: 1;
-  padding: 24px;
+  padding: 32px;
   border: none;
   outline: none;
   resize: none;
   font-size: 16px;
-  line-height: 1.6;
-  font-family: inherit;
+  line-height: 1.8;
+  font-family: 'Inter', sans-serif;
   background: transparent;
-  color: var(--text-primary);
+  color: rgba(242, 247, 255, 0.9);
 }
 
 .note-content-input::placeholder {
-  color: var(--text-secondary);
+  color: rgba(242, 247, 255, 0.3);
+}
+
+.note-content-input::-webkit-scrollbar {
+  width: 8px;
+}
+
+.note-content-input::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.note-content-input::-webkit-scrollbar-thumb {
+  background: rgba(46, 233, 255, 0.2);
+  border-radius: 4px;
 }

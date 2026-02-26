@@ -31,7 +31,7 @@ export const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
       <div className="auth-container">
         <div className="auth-header">
           <div className="logo">
-            <span className="logo-icon">⚡</span>
+            <div className="logo-icon">V</div>
             <h1>VibeOS</h1>
           </div>
           <p className="tagline">Your AI-powered creative command center</p>
@@ -45,15 +45,15 @@ export const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
 
           <div className="features-list">
             <div className="feature-item">
-              <span className="feature-icon">🧠</span>
+              <span className="feature-icon">AI</span>
               <span>Context-aware AI that understands your work</span>
             </div>
             <div className="feature-item">
-              <span className="feature-icon">⚡</span>
+              <span className="feature-icon">FAST</span>
               <span>Lightning-fast, modular workspace</span>
             </div>
             <div className="feature-item">
-              <span className="feature-icon">🎯</span>
+              <span className="feature-icon">BUILD</span>
               <span>Built for people building online</span>
             </div>
           </div>
@@ -69,7 +69,7 @@ export const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
           {error && <p className="error-message">{error}</p>}
 
           <p className="auth-footer">
-            Free to start • No credit card required
+            Free to start - No credit card required
           </p>
         </div>
       </div>

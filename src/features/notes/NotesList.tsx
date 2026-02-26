@@ -14,15 +14,23 @@ interface NotesListProps {
   workspaceId: string
   activeNoteId: string | null
   onNoteSelect: (id: string) => void
+  refreshTrigger?: number
 }
 
-export const NotesList = ({ workspaceId, activeNoteId, onNoteSelect }: NotesListProps) => {
+export const NotesList = ({ workspaceId, activeNoteId, onNoteSelect, refreshTrigger }: NotesListProps) => {
   const [notes, setNotes] = useState<Note[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     loadNotes()
   }, [workspaceId])
+
+  // Refresh when trigger changes
+  useEffect(() => {
+    if (refreshTrigger !== undefined && refreshTrigger > 0) {
+      loadNotes()
+    }
+  }, [refreshTrigger])
 
   const loadNotes = async () => {
     try {
