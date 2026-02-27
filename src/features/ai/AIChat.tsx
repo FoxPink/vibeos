@@ -508,7 +508,7 @@ RULES:
 - When user asks for help/guide (hướng dẫn), ONLY explain features, DO NOT create examples
 - Only perform actions when user explicitly requests them
 - Be concise and helpful
-- Use Vietnamese for communication
+- Respond in the same language as the user's question
 
 User question: ${input}`
 
