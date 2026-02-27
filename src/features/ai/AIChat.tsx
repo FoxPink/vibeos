@@ -191,58 +191,16 @@ export const AIChat = ({ workspaceId, hideHeader = false, onNoteAction, onWorksp
   }
 
   const cleanMessageContent = (content: string): string => {
-    // Remove action tags and replace with user-friendly message
+    // Simply remove action tags - AI will handle the confirmation messages
     let cleaned = content
 
-    // Replace CREATE action
-    cleaned = cleaned.replace(/\[ACTION:CREATE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
-      const titleMatch = actionContent.match(/Title:\s*(.+)/i)
-      if (titleMatch) {
-        return `✅ Đã tạo note: "${titleMatch[1].trim()}"`
-      }
-      return '✅ Đã tạo note mới'
-    })
-
-    // Replace UPDATE action
-    cleaned = cleaned.replace(/\[ACTION:UPDATE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
-      const titleMatch = actionContent.match(/Title:\s*(.+)/i)
-      if (titleMatch) {
-        return `✅ Đã cập nhật note: "${titleMatch[1].trim()}"`
-      }
-      return '✅ Đã cập nhật note'
-    })
-
-    // Replace DELETE action
-    cleaned = cleaned.replace(/\[ACTION:DELETE\]([\s\S]*?)\[\/ACTION\]/gi, () => {
-      return '✅ Đã xóa note'
-    })
-
-    // Replace CREATE_WORKSPACE action
-    cleaned = cleaned.replace(/\[ACTION:CREATE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
-      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
-      if (nameMatch) {
-        return `✅ Đã tạo workspace: "${nameMatch[1].trim()}"`
-      }
-      return '✅ Đã tạo workspace mới'
-    })
-
-    // Replace RENAME_WORKSPACE action
-    cleaned = cleaned.replace(/\[ACTION:RENAME_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
-      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
-      if (nameMatch) {
-        return `✅ Đã đổi tên workspace thành: "${nameMatch[1].trim()}"`
-      }
-      return '✅ Đã đổi tên workspace'
-    })
-
-    // Replace DELETE_WORKSPACE action
-    cleaned = cleaned.replace(/\[ACTION:DELETE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, (_match, actionContent) => {
-      const nameMatch = actionContent.match(/Name:\s*(.+)/i)
-      if (nameMatch) {
-        return `✅ Đã xóa workspace: "${nameMatch[1].trim()}"`
-      }
-      return '✅ Đã xóa workspace'
-    })
+    // Remove all action tags but keep the content around them
+    cleaned = cleaned.replace(/\[ACTION:CREATE\]([\s\S]*?)\[\/ACTION\]/gi, '')
+    cleaned = cleaned.replace(/\[ACTION:UPDATE\]([\s\S]*?)\[\/ACTION\]/gi, '')
+    cleaned = cleaned.replace(/\[ACTION:DELETE\]([\s\S]*?)\[\/ACTION\]/gi, '')
+    cleaned = cleaned.replace(/\[ACTION:CREATE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, '')
+    cleaned = cleaned.replace(/\[ACTION:RENAME_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, '')
+    cleaned = cleaned.replace(/\[ACTION:DELETE_WORKSPACE\]([\s\S]*?)\[\/ACTION\]/gi, '')
 
     return cleaned.trim()
   }
@@ -509,6 +467,16 @@ RULES:
 - Only perform actions when user explicitly requests them
 - Be concise and helpful
 - Respond in the same language as the user's question
+- IMPORTANT: After performing an action, confirm it with a message in the user's language
+  Examples:
+  * English: "✅ Created note: 'Title'"
+  * Vietnamese: "✅ Đã tạo note: 'Title'"
+  * Spanish: "✅ Nota creada: 'Title'"
+  * Chinese: "✅ 已创建笔记：'Title'"
+  * Japanese: "✅ ノートを作成しました：'Title'"
+  * Korean: "✅ 노트 생성됨: 'Title'"
+  * French: "✅ Note créée : 'Title'"
+  * German: "✅ Notiz erstellt: 'Title'"
 
 User question: ${input}`
 
@@ -551,7 +519,7 @@ User question: ${input}`
       // Parse and execute actions
       await parseAndExecuteActions(messageContent)
 
-      // Clean message content for display
+      // Clean message content for display (remove action tags)
       const cleanedContent = cleanMessageContent(messageContent)
 
       const aiMessage: Message = {
